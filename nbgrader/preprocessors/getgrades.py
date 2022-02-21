@@ -41,7 +41,10 @@ class GetGrades(NbGraderPreprocessor):
             resources['nbgrader']['score'] = notebook.score - late_penalty
             resources['nbgrader']['max_score'] = notebook.max_score
             resources['nbgrader']['late_penalty'] = late_penalty
-
+        
+        # Set title
+        nb['metadata']['title'] = resources['nbgrader']['notebook']
+        
         return nb, resources
 
     def _get_comment(self, cell: NotebookNode, resources: ResourcesDict) -> None:
