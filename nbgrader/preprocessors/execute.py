@@ -58,41 +58,41 @@ class Execute(NbGraderPreprocessor, ExecutePreprocessor):
 
         return output
 
-    def _check_raise_for_error(
-            self,
-            cell: NotebookNode,
-            exec_reply: Optional[Dict]) -> None:
+    # async def _check_raise_for_error(
+    #         self,
+    #         cell: NotebookNode,
+    #         exec_reply: Optional[Dict]) -> None:
 
-        exec_reply_content = exec_reply['content']
+    #     exec_reply_content = exec_reply['content']
 
-        # Ensure errors are recorded to prevent false positives when autograding
-        if exec_reply is None or exec_reply_content['status'] == 'error':
-            error_recorded = False
-            for output in cell.outputs:
-                if output.output_type == 'error':
-                    error_recorded = True
-                    break
+    #     # Ensure errors are recorded to prevent false positives when autograding
+    #     if exec_reply is None or exec_reply_content['status'] == 'error':
+    #         error_recorded = False
+    #         for output in cell.outputs:
+    #             if output.output_type == 'error':
+    #                 error_recorded = True
+    #                 break
 
-            if not error_recorded:
-                error_output = NotebookNode(output_type='error')
-                if exec_reply is None:
-                    # Occurs when
-                    # IPython.core.interactiveshell.InteractiveShell.showtraceback = None
-                    error_output.ename = "CellTimeoutError"
-                    error_output.evalue = ""
-                    error_output.traceback = ["ERROR: No reply from kernel"]
-                else:
-                    # Occurs when
-                    # IPython.core.interactiveshell.InteractiveShell.showtraceback = lambda *args, **kwargs: None
-                    error_output.ename = exec_reply_content['ename']
-                    error_output.evalue = exec_reply_content['evalue']
-                    error_output.traceback = exec_reply_content['traceback']
-                    if error_output.traceback == []:
-                        error_output.traceback = ["ERROR: An error occurred while"
-                                                  " showtraceback was disabled"]
-                cell.outputs.append(error_output)
+    #         if not error_recorded:
+    #             error_output = NotebookNode(output_type='error')
+    #             if exec_reply is None:
+    #                 # Occurs when
+    #                 # IPython.core.interactiveshell.InteractiveShell.showtraceback = None
+    #                 error_output.ename = "CellTimeoutError"
+    #                 error_output.evalue = ""
+    #                 error_output.traceback = ["ERROR: No reply from kernel"]
+    #             else:
+    #                 # Occurs when
+    #                 # IPython.core.interactiveshell.InteractiveShell.showtraceback = lambda *args, **kwargs: None
+    #                 error_output.ename = exec_reply_content['ename']
+    #                 error_output.evalue = exec_reply_content['evalue']
+    #                 error_output.traceback = exec_reply_content['traceback']
+    #                 if error_output.traceback == []:
+    #                     error_output.traceback = ["ERROR: An error occurred while"
+    #                                               " showtraceback was disabled"]
+    #             cell.outputs.append(error_output)
 
-        super()._check_raise_for_error(cell, exec_reply)
+    #     super()._check_raise_for_error(cell, exec_reply)
 
     async def _async_handle_timeout(self, timeout: int, cell: Optional[NotebookNode] = None) -> None:
         await super()._async_handle_timeout(timeout, cell)
